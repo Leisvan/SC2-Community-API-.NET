@@ -6,7 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SC2Community
+namespace SC2Community.WebRequests
 {
     public interface IWebRequestMachine
     {
@@ -19,11 +19,12 @@ namespace SC2Community
         private const string URIPARAMETER_ACCESSTOKEN_F = "access_token={0}";
 
         private IOAuthTokenProvider _tokenProvider;
-        public int RetryCountIfEmpty { get; set; }
+        private IWebRequestConfiguration _configuration;
 
-        public WebRequestMachine(IOAuthTokenProvider tokenProvider)
+        public WebRequestMachine(IOAuthTokenProvider tokenProvider, IWebRequestConfiguration configuration)
         {
             _tokenProvider = tokenProvider;
+            _configuration = configuration;
         }
         public async Task<string> GetResponseAsync(string url)
         {
@@ -37,7 +38,7 @@ namespace SC2Community
                 string uriFormat = AppendAccessTokenFormat(url);
                 url = string.Format(uriFormat, token);
             }
-            int retryCount = RetryCountIfEmpty;
+            int retryCount = _configuration.RetryCount;
 
             Exception error;
             string serverResponse;
@@ -53,6 +54,12 @@ namespace SC2Community
                     StreamReader reader = new StreamReader(dataStream);
 
                     serverResponse = reader.ReadToEnd();
+
+                    if (_configuration.EmptyIsError 
+                        && string.IsNullOrWhiteSpace(serverResponse))
+                    {
+                        throw new Exception();
+                    }
 
                     response.Close();
                     dataStream.Close();

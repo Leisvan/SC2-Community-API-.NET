@@ -1,6 +1,7 @@
 ﻿using CommonServiceLocator;
 using SC2Community;
 using SC2Community.OAuth;
+using SC2Community.WebRequests;
 using System;
 using System.Threading.Tasks;
 using Unity;
@@ -26,6 +27,7 @@ namespace TestAPIHelper
 
             _container.RegisterInstance<IOAuthCredentials>(new OAuthCredentials("", ""));
             _container.RegisterSingleton<IOAuthTokenProvider, OAuthTokenProvider>();
+            _container.RegisterSingleton<IWebRequestConfiguration, WebRequestConfiguration>();
             _container.RegisterSingleton<IWebRequestMachine, WebRequestMachine>();
 
         }
