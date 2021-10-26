@@ -1,14 +1,16 @@
 ﻿using Newtonsoft.Json;
+using SC2Community.ResponseModels;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SC2Community.OAuth
+namespace SC2CommunityAPI.Http
 {
     public interface IOAuthTokenProvider
     {
+        IOAuthCredentials Credentials { get; }
         Task<OAuthToken> GetTokenAsync();
     }
 
@@ -21,7 +23,8 @@ namespace SC2Community.OAuth
         {
             _credentials = credentials;
         }
-        
+        public IOAuthCredentials Credentials { get => _credentials; }
+
         public async Task<OAuthToken> GetTokenAsync()
         {
             if (_cachedToken == null || _cachedToken.IsExpired)
@@ -44,7 +47,7 @@ namespace SC2Community.OAuth
                     if (reqResult.IsSuccessStatusCode)
                     {
                         var contentStr = await reqResult.Content.ReadAsStringAsync();
-                        var configJson = JsonConvert.DeserializeObject<BNetTokenJson>(contentStr);
+                        var configJson = JsonConvert.DeserializeObject<TokenJson>(contentStr);
                         _cachedToken = new OAuthToken(configJson.AccessToken, configJson.TokenType, configJson.Expiration);
                     }
 
@@ -58,14 +61,5 @@ namespace SC2Community.OAuth
             return _cachedToken;
         }
 
-        public struct BNetTokenJson
-        {
-            [JsonProperty("access_token")]
-            public string AccessToken { get; private set; }
-            [JsonProperty("token_type")]
-            public string TokenType { get; private set; }
-            [JsonProperty("expires_in")]
-            public string Expiration { get; private set; }
-        }
     }
 }

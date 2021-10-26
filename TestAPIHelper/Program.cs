@@ -22,12 +22,10 @@ namespace TestAPIHelper
 
         private static async void TestRequest()
         {
-            WebRequestMachine machine = new WebRequestMachine(
+            Endpoints ep = new Endpoints(
                 new OAuthTokenProvider(
-                    new OAuthCredentials("", ""))
-                , new WebRequestConfiguration(5));
-            Endpoints ep = new Endpoints(machine);
-            var r = await ep.GetLeagueDataAsync(Region.EU, "48", QueueId.LotV1v1, TeamType.Arranged, LeagueId.Master);
+                    new OAuthCredentials("", "")));
+            var result = await ep.GetLeagueDataAsync(Regions.EU, "48", QueueId.LotV1v1, TeamType.Arranged, LeagueId.Master);
         }
 
         private static void RegisterDependencies()

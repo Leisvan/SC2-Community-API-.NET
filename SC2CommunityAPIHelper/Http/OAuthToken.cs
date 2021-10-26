@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SC2Community.OAuth
+namespace SC2CommunityAPI.Http
 {
     public class OAuthToken
     {

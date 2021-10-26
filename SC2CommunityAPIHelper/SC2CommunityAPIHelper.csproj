@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>SC2Community</RootNamespace>
+    <RootNamespace>SC2CommunityAPI</RootNamespace>
+    <AssemblyName>SC2CommunityAPI</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,4 +1,5 @@
-﻿using SC2Community.OAuth;
+﻿using SC2CommunityAPI.Http;
+using SC2CommunityAPI.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,11 +7,13 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SC2Community.WebRequests
+namespace SC2CommunityAPI.Http
 {
     public interface IWebRequestMachine
     {
-        Task<string> GetResponseAsync(string url);
+        IOAuthTokenProvider TokenProvider { get; }
+        IWebRequestConfiguration Configuration { get; }
+        Task<HttpResponseData> GetResponseAsync(string url);
     }
 
     public class WebRequestMachine : IWebRequestMachine
@@ -18,30 +21,21 @@ namespace SC2Community.WebRequests
         private const string URIPARAMETER_ACCESSTOKEN = "access_token";
         private const string URIPARAMETER_ACCESSTOKEN_F = "access_token={0}";
 
-        private IOAuthTokenProvider _tokenProvider;
-        private IWebRequestConfiguration _configuration;
+        public IOAuthTokenProvider TokenProvider { get; private set; }
+        public IWebRequestConfiguration Configuration { get; private set; }
 
         public WebRequestMachine(IOAuthTokenProvider tokenProvider, IWebRequestConfiguration configuration)
         {
-            _tokenProvider = tokenProvider;
-            _configuration = configuration;
+            TokenProvider = tokenProvider;
+            Configuration = configuration;
         }
-        public async Task<string> GetResponseAsync(string url)
+        public async Task<HttpResponseData> GetResponseAsync(string url)
         {
-            if (!url.Contains(URIPARAMETER_ACCESSTOKEN))
-            {
-                var token = await _tokenProvider.GetTokenAsync();
-                if (string.IsNullOrWhiteSpace(token.AccessToken))
-                {
-                    return string.Empty;
-                }
-                string uriFormat = AppendAccessTokenFormat(url);
-                url = string.Format(uriFormat, token);
-            }
-            int retryCount = _configuration.RetryCount;
-
+            url = await CheckTokenConsistencyAsync(url);
+            
+            int retryCount = Configuration.RetryCount;
             Exception error;
-            string serverResponse;
+            HttpResponseData data;
             do
             {
                 try
@@ -52,13 +46,16 @@ namespace SC2Community.WebRequests
                         .ConfigureAwait(false);
                     Stream dataStream = response.GetResponseStream();
                     StreamReader reader = new StreamReader(dataStream);
+                    string serverResponse = reader.ReadToEnd();
 
-                    serverResponse = reader.ReadToEnd();
-
-                    if (_configuration.EmptyIsError 
-                        && string.IsNullOrWhiteSpace(serverResponse))
+                    data = new HttpResponseData
                     {
-                        throw new Exception();
+                        Headers = response.Headers,
+                        Body = serverResponse,
+                    };
+                    if (response is HttpWebResponse httpResponse)
+                    {
+                        data.StatusDescription = httpResponse.StatusDescription;
                     }
 
                     response.Close();
@@ -68,14 +65,28 @@ namespace SC2Community.WebRequests
                 }
                 catch (Exception e)
                 {
-                    serverResponse = null;
                     error = e;
+                    data = null;
                 }
             }
             while (retryCount-- > 0 && error != null);
-            return serverResponse;
+            return data;
         }
 
+        private async Task<string> CheckTokenConsistencyAsync(string url)
+        {
+            if (!url.Contains(URIPARAMETER_ACCESSTOKEN))
+            {
+                var token = await TokenProvider.GetTokenAsync();
+                if (string.IsNullOrWhiteSpace(token.AccessToken))
+                {
+                    return string.Empty;
+                }
+                string uriFormat = AppendAccessTokenFormat(url);
+                return string.Format(uriFormat, token.AccessToken);
+            }
+            return url;
+        }
         private string AppendAccessTokenFormat(string url)
         {
             StringBuilder builder = new StringBuilder(url);
