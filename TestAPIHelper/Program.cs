@@ -1,7 +1,7 @@
 ﻿using CommonServiceLocator;
-using SC2Community;
-using SC2Community.OAuth;
-using SC2Community.WebRequests;
+using SC2CommunityAPI;
+using SC2CommunityAPI.Http;
+using SC2CommunityAPI.RequestArguments;
 using System;
 using System.Threading.Tasks;
 using Unity;
@@ -13,10 +13,21 @@ namespace TestAPIHelper
     {
         static void Main(string[] args)
         {
-            RegisterDependencies();
-            Console.WriteLine("All Dependencies Registered");
+            //RegisterDependencies();
+            //Console.WriteLine("All Dependencies Registered");
+            TestRequest();
 
             Console.ReadLine();
+        }
+
+        private static async void TestRequest()
+        {
+            WebRequestMachine machine = new WebRequestMachine(
+                new OAuthTokenProvider(
+                    new OAuthCredentials("", ""))
+                , new WebRequestConfiguration(5));
+            Endpoints ep = new Endpoints(machine);
+            var r = await ep.GetLeagueDataAsync(Region.EU, "48", QueueId.LotV1v1, TeamType.Arranged, LeagueId.Master);
         }
 
         private static void RegisterDependencies()
