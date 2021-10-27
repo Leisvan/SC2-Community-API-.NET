@@ -4,10 +4,10 @@ using System.Text;
 
 namespace SC2CommunityAPI.RequestArguments
 {
-    public enum Regions : byte
+    public enum Region : byte
     {
-        NA = 2,
-        EU = 4,
-        KR = 8,
+        NA = 1,
+        EU = 2,
+        KR = 3,
     }
 }

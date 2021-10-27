@@ -9,55 +9,39 @@ using Newtonsoft.Json;
 
 namespace SC2CommunityAPI
 {
-    public class Endpoints
+    public class Endpoints : EndpointsBase
     {
         private const string URI_LEAGUEDATA = "https://{0}.api.blizzard.com/data/sc2/league/{1}/{2}/{3}/{4}";
-        private const string _defLocale = "en_US";
+        private const string URI_GMLEADERBOARD = "https://{0}.api.blizzard.com/sc2/ladder/grandmaster/{1}";
+        private const string URI_SEASON = "https://{0}.api.blizzard.com/sc2/ladder/season/{1}";
 
-        private readonly IWebRequestMachine requestMachine;
-
-        public Endpoints(IOAuthTokenProvider tokenProvider)
-            :this(new WebRequestMachine(tokenProvider, new WebRequestConfiguration()))
+        public Endpoints(IOAuthTokenProvider tokenProvider):base(tokenProvider)
         {
 
         }
-        public Endpoints(IWebRequestMachine requestMachine)
+        public Endpoints(IWebRequestMachine requestMachine):base(requestMachine)
         {
-            this.requestMachine = requestMachine;
+            
         }
 
+        #region Game Data Endpoints
         /// <summary>
         /// Returns data for the specified season, queue, team, and league.
         /// Documentation: https://develop.battle.net/documentation/starcraft-2/game-data-apis
         /// </summary>
-        public async Task<EndpointResponse<LeagueDataJson>> GetLeagueDataAsync(Regions requestRegion, string seasonId, QueueId queueId, TeamType teamType, LeagueId leagueId, string locale = _defLocale)
+        public async Task<EndpointResponse<LeagueDataJson>> GetLeagueDataAsync(Region region, string seasonId, QueueId queueId, TeamType teamType, LeagueId leagueId, string locale = DEF_LOCALE)
         {
-            string formattedUrl = string.Format(URI_LEAGUEDATA, GetRegionString(requestRegion), seasonId, (int)queueId, (int)teamType, (int)leagueId, locale);
-            var response = await requestMachine.GetResponseAsync(formattedUrl);
-            return GetRequestResult<LeagueDataJson>(response);
-        }
-
-        #region Private Methods
-        private static string GetRegionString(Regions region)
-        {
-            return region switch
-            {
-                Regions.EU => "eu",
-                Regions.KR => "kr",
-                _ => "us",
-            };
-        }
-        private static EndpointResponse<T> GetRequestResult<T>(HttpResponseData data)
-        {
-            T jsonResult = JsonConvert.DeserializeObject<T>(data.Body);
-            return new EndpointResponse<T>
-            {
-                StatusDescription = data.StatusDescription,
-                Body = data.Body,
-                FormattedData = jsonResult,
-            };
+            string formattedUrl = string.Format(URI_LEAGUEDATA, GetHostNameRegionString((HostNameRegion)(int)region), seasonId, (int)queueId, (int)teamType, (int)leagueId, locale);
+            return await GetResponseAsync<LeagueDataJson>(formattedUrl);
         }
         #endregion
 
+
+        public async Task<EndpointResponse<SeasonJson>> GetSeasonAsync(HostNameRegion hostNameRegion, Region region)
+        {
+            string formattedUrl = string.Format(URI_SEASON, GetHostNameRegionString(hostNameRegion), (int)region);
+            return await GetResponseAsync<SeasonJson>(formattedUrl);
+        }
+       
     }
 }
