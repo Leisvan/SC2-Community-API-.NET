@@ -42,6 +42,11 @@ namespace SC2CommunityAPI
             string formattedUrl = string.Format(URI_SEASON, GetHostNameRegionString(hostNameRegion), (int)region);
             return await GetResponseAsync<SeasonJson>(formattedUrl);
         }
-       
+        public async Task<EndpointResponse<LadderTeamsCollectionJson>> GetGrandmasterLeaderboardAsync(HostNameRegion hostNameRegion, Region region)
+        {
+            string formattedUrl = string.Format(URI_GMLEADERBOARD, GetHostNameRegionString(hostNameRegion), (int)region);
+            return await GetResponseAsync<LadderTeamsCollectionJson>(formattedUrl);
+        }
+
     }
 }
