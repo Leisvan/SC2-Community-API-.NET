@@ -6,27 +6,27 @@ using System.Threading.Tasks;
 
 namespace SC2CommunityAPI
 {
-    public class EndpointsBase
+    public abstract class BaseAPI
     {
         protected const string DEF_LOCALE = "en_US";
 
         protected readonly IWebRequestMachine requestMachine;
 
-        public EndpointsBase(IOAuthTokenProvider tokenProvider)
+        public BaseAPI(IOAuthTokenProvider tokenProvider)
             : this(new WebRequestMachine(tokenProvider, new WebRequestConfiguration()))
         {
 
         }
-        public EndpointsBase(IWebRequestMachine requestMachine)
+        public BaseAPI(IWebRequestMachine requestMachine)
         {
             this.requestMachine = requestMachine;
         }
 
-        protected async Task<EndpointResponse<T>> GetResponseAsync<T>(string url)
+        protected async Task<APIResponse<T>> GetResponseAsync<T>(string url)
         {
             var response = await requestMachine.GetResponseAsync(url);
             T jsonResult = JsonConvert.DeserializeObject<T>(response.Body);
-            return new EndpointResponse<T>
+            return new APIResponse<T>
             {
                 StatusDescription = response.StatusDescription,
                 Body = response.Body,
@@ -42,10 +42,10 @@ namespace SC2CommunityAPI
                 _ => "us",
             };
         }
-        protected static EndpointResponse<T> GetRequestResult<T>(HttpResponseData data)
+        protected static APIResponse<T> GetRequestResult<T>(HttpResponseData data)
         {
             T jsonResult = JsonConvert.DeserializeObject<T>(data.Body);
-            return new EndpointResponse<T>
+            return new APIResponse<T>
             {
                 StatusDescription = data.StatusDescription,
                 Body = data.Body,
