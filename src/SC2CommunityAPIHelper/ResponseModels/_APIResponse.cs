@@ -8,6 +8,6 @@ namespace SC2CommunityAPI.ResponseModels
     {
         public string Body { get; set; }
         public string StatusDescription { get; set; }
-        public T FormattedData { get; set; }
+        public T Model { get; set; }
     }
 }

@@ -10,7 +10,7 @@ namespace SC2CommunityAPI
 {
     public class LeagueAPI : BaseAPI
     {
-        private const string URI_LEAGUEDATA = "https://{0}.api.blizzard.com/data/sc2/league/{1}/{2}/{3}/{4}";
+        private const string URI_LEAGUEDATA = "https://{0}.api.blizzard.com/data/sc2/league/{1}/{2}/{3}/{4}?locale={5}";
 
         public LeagueAPI(IOAuthTokenProvider tokenProvider) : base(tokenProvider)
         {

@@ -30,7 +30,7 @@ namespace SC2CommunityAPI
             {
                 StatusDescription = response.StatusDescription,
                 Body = response.Body,
-                FormattedData = jsonResult,
+                Model = jsonResult,
             };
         }
         protected static string GetHostNameRegionString(HostNameRegion region)
@@ -49,7 +49,7 @@ namespace SC2CommunityAPI
             {
                 StatusDescription = data.StatusDescription,
                 Body = data.Body,
-                FormattedData = jsonResult,
+                Model = jsonResult,
             };
         }
     }
