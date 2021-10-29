@@ -52,5 +52,14 @@ namespace SC2CommunityAPI
                 Model = jsonResult,
             };
         }
+        protected static HostNameRegion Convert(Region region)
+        {
+            return region switch
+            {
+                Region.EU => HostNameRegion.EU,
+                Region.KR => HostNameRegion.KR,
+                _ => HostNameRegion.NA,
+            };
+        }
     }
 }

@@ -27,7 +27,7 @@ namespace SC2CommunityAPI
         /// </summary>
         public async Task<APIResponse<LeagueDataJson>> GetLeagueDataAsync(Region region, string seasonId, QueueId queueId, TeamType teamType, LeagueId leagueId, string locale = DEF_LOCALE)
         {
-            string formattedUrl = string.Format(URI_LEAGUEDATA, GetHostNameRegionString((HostNameRegion)(int)region), seasonId, (int)queueId, (int)teamType, (int)leagueId, locale);
+            string formattedUrl = string.Format(URI_LEAGUEDATA, GetHostNameRegionString(Convert(region)), seasonId, (int)queueId, (int)teamType, (int)leagueId, locale);
             return await GetResponseAsync<LeagueDataJson>(formattedUrl);
         }
     }

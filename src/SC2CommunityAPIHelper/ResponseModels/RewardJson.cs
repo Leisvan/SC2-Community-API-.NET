@@ -6,7 +6,7 @@ using Newtonsoft.Json.Converters;
 
 namespace SC2CommunityAPI.ResponseModels
 {
-    public partial class RewardJson
+    public class RewardJson
     {
         [JsonProperty("flags")]
         public long Flags { get; set; }

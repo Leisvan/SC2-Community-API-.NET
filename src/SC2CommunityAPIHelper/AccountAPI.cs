@@ -22,7 +22,7 @@ namespace SC2CommunityAPI
 
         public async Task<APIResponse<IList<PlayerJson>>> GetPIResponseAsync(HostNameRegion region, string accountId)
         {
-            string formattedUrl = string.Format(URI_ACCOUNT, GetHostNameRegionString((HostNameRegion)(int)region), accountId);
+            string formattedUrl = string.Format(URI_ACCOUNT, GetHostNameRegionString(region), accountId);
             return await GetResponseAsync<IList<PlayerJson>>(formattedUrl);
         }
     }

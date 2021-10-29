@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace SC2CommunityAPI.ResponseModels
 {
-    public partial class CategoryJson
+    public class CategoryJson
     {
         [JsonProperty("childrenCategoryIds")]
         public List<string> ChildrenCategoryIds { get; set; }

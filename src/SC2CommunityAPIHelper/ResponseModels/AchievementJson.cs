@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace SC2CommunityAPI.ResponseModels
 {
-    public partial class AchievementJson
+    public class AchievementJson
     {
         [JsonProperty("categoryId")]
         public string CategoryId { get; set; }

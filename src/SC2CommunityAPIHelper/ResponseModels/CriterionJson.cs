@@ -2,7 +2,7 @@
 
 namespace SC2CommunityAPI.ResponseModels
 {
-    public partial class CriterionJson
+    public class CriterionJson
     {
         [JsonProperty("achievementId")]
         public string AchievementId { get; set; }
