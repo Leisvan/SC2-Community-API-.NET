@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SC2CommunityAPI.ResponseModels
 {
-    public struct TeamMemberJson
+    public class TeamMemberJson
     {
         [JsonProperty("id")]
         public int Id
