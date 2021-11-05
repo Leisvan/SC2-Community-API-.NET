@@ -5,15 +5,15 @@ using System.Text;
 
 namespace SC2CommunityAPI.ResponseModels
 {
-    public class AllLadderMembership
+    public partial class RanksAndPoolJson
     {
-        [JsonProperty("ladderId")]
-        public string LadderId { get; set; }
-
-        [JsonProperty("localizedGameMode")]
-        public string LocalizedGameMode { get; set; }
-
         [JsonProperty("rank")]
         public long Rank { get; set; }
+
+        [JsonProperty("mmr")]
+        public long Mmr { get; set; }
+
+        [JsonProperty("bonusPool")]
+        public long BonusPool { get; set; }
     }
 }

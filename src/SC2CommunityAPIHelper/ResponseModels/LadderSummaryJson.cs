@@ -14,6 +14,6 @@ namespace SC2CommunityAPI.ResponseModels
         public List<PlacementMatchJson> PlacementMatches { get; set; }
 
         [JsonProperty("allLadderMemberships")]
-        public List<AllLadderMembership> AllLadderMemberships { get; set; }
+        public List<LadderMembershipJson> AllLadderMemberships { get; set; }
     }
 }
